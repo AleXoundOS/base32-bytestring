@@ -26,7 +26,6 @@ module Data.ByteString.Base32.Internal
 import Prelude hiding (catch)
 #endif
 import Control.Exception hiding (mask)
-import Data.Bits.Extras
 import Data.ByteString as BS
 import Data.ByteString.Internal as BS
 import Data.Word
@@ -41,20 +40,8 @@ import System.Endian
 
 type Word5 = Word8
 
--- System.Endian.toBE32 is slower because toBE32 implemented using
--- cbits shuffle functions while toBE32' implemented used gcc
--- intrinsics
---
-toBE64' :: Word64 -> Word64
-toBE64' = if getSystemEndianness == BigEndian then id else byteSwap
-{-# INLINE toBE64' #-}
-
-toBE32' :: Word32 -> Word32
-toBE32' = if getSystemEndianness == BigEndian then id else byteSwap
-{-# INLINE toBE32' #-}
-
 fromBE32' :: Word32 -> Word32
-fromBE32' = toBE32'
+fromBE32' = toBE32
 {-# INLINE fromBE32' #-}
 
 -- n = 2 ^ d
@@ -92,7 +79,7 @@ unpack5Ptr !tbl bs @ (PS fptr off sz) =
 
     unpack5_40 !dst !src = do
       w32he <- peek (castPtr src) :: IO Word32
-      let w32 = toBE32' w32he
+      let w32 = toBE32 w32he
       fill8_32 0 (w32 `unsafeShiftR` 27)
       fill8_32 1 (w32 `unsafeShiftR` 22)
       fill8_32 2 (w32 `unsafeShiftR` 17)
@@ -190,7 +177,7 @@ pack5Ptr !tbl bs @ (PS fptr off sz) =
 
     pack5_40 !dst !src = do
         w64he <- peek (castPtr src) :: IO Word64
-        let w64 = toBE64' w64he
+        let w64 = toBE64 w64he
         let w40 = putAsW5 (w64 `unsafeShiftR` 00) $
                   putAsW5 (w64 `unsafeShiftR` 08) $
                   putAsW5 (w64 `unsafeShiftR` 16) $
