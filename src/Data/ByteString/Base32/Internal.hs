@@ -29,7 +29,7 @@ import Control.Exception hiding (mask)
 import Data.ByteString as BS
 import Data.ByteString.Internal as BS
 import Data.Word
-import Foreign   hiding (unsafePerformIO)
+import Foreign
 import System.IO.Unsafe (unsafePerformIO)
 import System.Endian
 
@@ -163,7 +163,7 @@ pack5Ptr !tbl bs @ (PS fptr off sz) =
     lookupTable ix
         | x == invIx = error $ show (w2c ix) ++ " is not base32 character"
         | otherwise  = x
-      where x = inlinePerformIO (peekByteOff tbl (fromIntegral ix))
+      where x = unsafePerformIO (peekByteOff tbl (fromIntegral ix))
     {-# INLINE lookupTable #-}
 
     dstSize x = d + if m == 0 then 0 else 1
@@ -235,7 +235,7 @@ pack5 (PS fptr off len) bs
 
 isInAlphabet :: Ptr Word5 -> Word8 -> Bool
 isInAlphabet !tbl !ix =
-  inlinePerformIO (peekByteOff tbl (fromIntegral ix)) /= invIx
+  unsafePerformIO (peekByteOff tbl (fromIntegral ix)) /= invIx
 
 pack5Lenient :: DecTable -> ByteString -> Either String ByteString
 pack5Lenient tbl @ (PS fptr _ _) bs =

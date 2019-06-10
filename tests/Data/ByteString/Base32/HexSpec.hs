@@ -2,7 +2,6 @@
 {-# OPTIONS -fno-warn-orphans #-}
 module Data.ByteString.Base32.HexSpec ( spec ) where
 
-import Control.Applicative
 import Data.ByteString as BS
 import Data.ByteString.Char8 as BC
 import Data.ByteString.Base32.Hex
