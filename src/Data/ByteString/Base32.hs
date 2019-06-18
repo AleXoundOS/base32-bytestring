@@ -43,12 +43,10 @@ encode = unpack5 encTable
 
 decW5 :: Word8 -> Word5
 decW5 !x
-  | x <  50  {- c2w '2' -} = invIx
-  | x <= 55  {- c2w '7' -} = x - 24 {- c2w '2' - 26 -}
-  | x <  65  {- c2w 'A' -} = invIx
-  | x <= 90  {- c2w 'Z' -} = x - 65 {- c2w 'A' -}
+  | x <  48  {- c2w '0' -} = invIx
+  | x <= 57  {- c2w '9' -} = x - 24
   | x <  97  {- c2w 'a' -} = invIx
-  | x <= 122 {- c2w 'z' -} = x - 97 {- c2w 'a' -}
+  | x <= 122 {- c2w 'z' -} = x - 97
   | otherwise = invIx
 {-# INLINE decW5 #-}
 
